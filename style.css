@@ -70,3 +70,7 @@ form[action*="multi-file-uploader"] .img-wrapper {
 form[action*="multi-file-uploader"] .mfcf7-zl-multifile-name {
     display: none !important;
 }
+
+.delete-file img.emoji {
+    vertical-align: 0 !important;
+}

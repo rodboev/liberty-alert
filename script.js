@@ -62,15 +62,6 @@ $(document).ready(function(){
 
     function fixHeight($el) {
         $('.loaded-img').load(function() {
-            $el.css({
-                'height': $('.loaded-img').height(),
-                'width': $('.loaded-img').width(),
-            })
-        })
-    }
-
-    function fixHeight($el) {
-        $('.loaded-img').load(function() {
             if ($el.length == 1) {
                 $el.css({
                     'height': $('.loaded-img').height(),
@@ -102,7 +93,7 @@ $(document).ready(function(){
             // console.log('$lastInput (' + $lastInput.length + '): ' + lastInputFilename)
             // console.log($lastInput[0])
             // console.log($lastInput[0].files)
-            console.log($lastInput[0].files[0])
+            // console.log($lastInput[0].files[0])
 
             readURL($lastInput[0])
             fixHeight($('.img-wrapper'))
