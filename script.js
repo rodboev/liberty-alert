@@ -22,28 +22,41 @@ $(document).ready(function(){
     }
     
     /* show thumbnail after taking photo */    
-    const isMultiUploader = !!$("#mfcf7_zl_multifilecontainer").length
-
     function readURL(input) {
-        if (input.files && input.files[0]) {
-            console.log(input.files[0])
+        // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
 
-            if ($("#mfcf7_zl_multifilecontainer")) {
-                $(input).after('<div class="img-wrapper"><img class="loaded-img"></div>')
-                console.log('created empty image container')
-            }
+        let preview;
+        if ($("#mfcf7_zl_multifilecontainer").length == 1) {
+            $(input).after('<div class="img-wrapper"><img class="loaded-img" src=""></div>')
+            preview = $(input).next().find('.loaded-img')[0]
+        }
+        else {
+            preview = $('.cameraButton .loaded-img')[0]
+        }
+        
 
-            var reader = new FileReader()
-            reader.onload = function (e) {
-                if ($(input).next() {
-                    console.log('adding img src to container')
-                    $(input).next('.img-wrapper').find('img').attr('src', e.target.result)
-                }
-                else {
-                    $('.loaded-img').attr('src', e.target.result)
-                }
+        const reader = new FileReader()
+
+        function handleEvent(event) {
+            console.log(event.type + ': ' + event.loaded + 'bytes transferred')
+            if (event.type === "load") {
+                preview.src = reader.result
             }
-            // reader.readAsDataURL(input.files[0])
+        }
+
+        function addListeners(reader) {
+            reader.addEventListener('loadstart', handleEvent)
+            reader.addEventListener('load', handleEvent)
+            reader.addEventListener('loadend', handleEvent)
+            reader.addEventListener('progress', handleEvent)
+            reader.addEventListener('error', handleEvent)
+            reader.addEventListener('abort', handleEvent)
+        }
+
+        const selectedFile = input.files[0]
+        if (selectedFile) {
+            addListeners(reader)
+            reader.readAsDataURL(selectedFile)
         }
     }
 
@@ -61,24 +74,24 @@ $(document).ready(function(){
     // Find just last container:
     // $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img').last().find('input#img-frame')
 
-    if (isMultiUploader) {
+    if ($("#mfcf7_zl_multifilecontainer").length == 1) {
         $("#mfcf7_zl_multifilecontainer").change(function() {
-            const $inputWrappers = $(this).children('.multilinefile-img')
-            const $lastInput = $inputWrappers.last().find('input#img-frame')
+            let $inputWrappers = $(this).children('.multilinefile-img')
+            let $lastInput = $inputWrappers.last().find('input#img-frame')
             const lastInputFilename = $inputWrappers.last()[0].innerText
 
             // console.log('$lastInput (' + $lastInput.length + '): ' + lastInputFilename)
             // console.log($lastInput[0])
             // console.log($lastInput[0].files)
-            // console.log($lastInput[0].files[0])
+            console.log($lastInput[0].files[0])
 
             readURL($lastInput[0])
-            fixHeight($lastInput.next('.img-wrapper'))
+            fixHeight($('.img-wrapper'))
         })
     }
     else {
         $('input#img-frame').change(function() {
-            readURL(this)
+            readURL($('input#img-frame')[0])
             fixHeight($('.cameraButton'))
         })
     }
