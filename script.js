@@ -26,20 +26,21 @@ $(document).ready(function(){
         if (input.files && input.files[0]) {
             var reader = new FileReader()
             reader.onload = function (e) {
-                if ($('#loaded-img').length == 0) {
-                    $(input).after('<div class="img-wrapper"><img id="loaded-img"></div>')
+                if ($('.loaded-img').length == 0) {
+                    $(input).after('<div class="img-wrapper"><img class="loaded-img"></div>')
                 }
-                $('#loaded-img').attr('src', e.target.result)
+                $('.loaded-img').attr('src', e.target.result)
             }
             reader.readAsDataURL(input.files[0])
         }
     }
 
     function fixHeight($el) {
-        $('#loaded-img').load(function() {
+        console.log('fixing height')
+        $('img.loaded-img').load(function() {
             $el.css({
-                'height': $('#loaded-img').height(),
-                'width': $('#loaded-img').width(),
+                'height': $('img.loaded-img').height(),
+                'width': $('img.loaded-img').width(),
             })
         })
     }
@@ -50,12 +51,11 @@ $(document).ready(function(){
     })
 
     /*
-    // const watch = $("#mfcf7_zl_multifilecontainer > .mfcf7-zl-multifile-name")
-    // const watch = $("#mfcf7_zl_multifilecontainer > .multilinefile-img")
-    // const watch = $('#mfcf7_zl_multifilecontainer > .multilinefile-img > .multilinefile-img')
     const watch =  $('#mfcf7_zl_multifilecontainer)
     watch.change(function() {
-        const imgFrame = $(this).children('p.multilinefile-img').find('input#img-frame')
+        const imgFrame = $(this)
+            .children('p.multilinefile-img')
+            .find('input#img-frame')
         console.log('change: ' + imgFrame[0])
     })
     $.when(watch).then((self) => {
@@ -67,27 +67,16 @@ $(document).ready(function(){
         console.log('change: ' + imgFrame[0])
     })
     */
+
     $("#mfcf7_zl_multifilecontainer").change(function() {
-        const $imgFrame = $(this)
+        const $input = $(this)
             .children('p.multilinefile-img')
             .find('input#img-frame')
-        const imgLength = $imgFrame.length - 1
-        readURL($imgFrame[imgLength])
+        const inputLength = $input.length - 1
+        const input = $input[inputLength] 
+        readURL(input)
         fixHeight($('.img-wrapper'));
     })
-
-    /*
-    $("input#img-frame").change(function() {
-        readURL(this)
-        const $button = $('.cameraButton').addClass('img-loaded')
-        $('#loaded-img').load(function() {
-            $button.css({
-                'height': $('#loaded-img').height(),
-                'width': $('#loaded-img').width(),
-            })
-        })
-    })
-    */
 
     /* auto format phone number */
     const isNumericInput = (event) => {

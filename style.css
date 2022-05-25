@@ -18,7 +18,8 @@ label.cameraButton,
 label.cameraButton input {
   display: none;
 }
-#loaded-img {
+#loaded-img,
+.loaded-img {
   position: absolute;
   top: 0;
   right: 0;
