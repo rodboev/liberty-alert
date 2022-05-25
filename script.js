@@ -69,6 +69,25 @@ $(document).ready(function(){
         })
     }
 
+    function fixHeight($el) {
+        $('.loaded-img').load(function() {
+            if ($el.length == 1) {
+                $el.css({
+                    'height': $('.loaded-img').height(),
+                    'width': $('.loaded-img').width(),
+                })
+            }
+            else {
+                $el.each(function(i, obj) {
+                    $(this).css({
+                        'height': $(this).children($el).eq(0).height(),
+                        'width': $(this).children($el).eq(0).width()
+                    })
+                })
+            }
+        }
+    )}
+
     // Find all image input containers:
     // $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img').find('input#img-frame')
     // Find just last container:
