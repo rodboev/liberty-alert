@@ -1,0 +1,65 @@
+label.cameraButton {
+  border: 0 none;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  cursor: pointer;
+}
+label.cameraButton,
+.img-wrapper {
+  width: 300px;
+  height: calc(300px/3*4);
+  max-width: 80vw;
+  max-height: calc(80vw/3*4);
+  position: relative;
+  overflow: hidden;
+}
+label.cameraButton input {
+  display: none;
+}
+#loaded-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.wpcf7-form-control-wrap .form-control,
+.pix-contact7-form input {
+  border: 1px solid #aaa !important;
+}
+.wpcf7-form-control-wrap .form-control {
+  all: initial;
+  box-shadow: none !important;
+}
+.pix-contact7-form input {
+  font-family: inherit !important;
+  line-height: inherit !important;
+  padding: 0.25em 0.5em !important;
+  outline: none;
+}
+.pix-contact7-form label:not(.cameraButton) {
+  color: black;
+}
+.pix-contact7-form input[type="submit"] {
+  margin-top: 1em;
+  padding: 0.5em 1.5em !important;
+}
+
+label.cameraButton,
+.pix-contact7-form input[type="submit"],
+.button,
+.img-wrapper {
+  background-color: #666;
+  color: white;
+  border-radius: 0.5em
+}
+.pix-contact7-form input.button {
+    padding: 0.5em 1.5em !important;
+}
+
+form[action*="multi-file-uploader"] .button {
+    margin-bottom: 20px;
+}
