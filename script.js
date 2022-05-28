@@ -1,12 +1,12 @@
 $(document).ready(function(){
-    /* jump straight to camera */
+    /* Jump straight to camera */
     $("input[type='file']")
         .attr('accept', 'image/*')
         .attr('capture', 'camera')
         .attr('id', 'img-frame')
     // "capture=environment" prefers front facing
     
-    /* dynamic company name */
+    /* Pull company name from query string and add to page */
     const getObjSize = obj => Object.keys(obj).length
     const queryString = new URLSearchParams(window.location.search)
     const queryStringObj = Object.fromEntries(queryString.entries())
@@ -21,9 +21,9 @@ $(document).ready(function(){
         companyLine.style.display = 'none'
     }
     
-    /* show thumbnail after taking photo */    
+    /* Show thumbnail after taking photo */    
+    // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
     function readURL(input) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
 
         let preview;
         if ($("#mfcf7_zl_multifilecontainer").length == 1) {
@@ -34,28 +34,15 @@ $(document).ready(function(){
             preview = $('.cameraButton .loaded-img')[0]
         }
         
-
         const reader = new FileReader()
-
-        function handleEvent(event) {
-            console.log(event.type + ': ' + event.loaded + 'bytes transferred')
-            if (event.type === "load") {
-                preview.src = reader.result
-            }
-        }
-
-        function addListeners(reader) {
-            reader.addEventListener('loadstart', handleEvent)
-            reader.addEventListener('load', handleEvent)
-            reader.addEventListener('loadend', handleEvent)
-            reader.addEventListener('progress', handleEvent)
-            reader.addEventListener('error', handleEvent)
-            reader.addEventListener('abort', handleEvent)
-        }
 
         const selectedFile = input.files[0]
         if (selectedFile) {
-            addListeners(reader)
+            reader.addEventListener('load', function(event) {
+                if (event.type === "load") {
+                    preview.src = reader.result
+                }
+            })
             reader.readAsDataURL(selectedFile)
         }
     }
@@ -79,25 +66,36 @@ $(document).ready(function(){
         }
     )}
 
-    // Find all image input containers:
-    // $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img').find('input#img-frame')
-    // Find just last container:
-    // $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img').last().find('input#img-frame')
-
     if ($("#mfcf7_zl_multifilecontainer").length == 1) {
-        $("#mfcf7_zl_multifilecontainer").change(function() {
-            let $inputWrappers = $(this).children('.multilinefile-img')
-            let $lastInput = $inputWrappers.last().find('input#img-frame')
+        const $button = $('#mfcf7_zl_add_file');
+        const buttonText = $button[0].value;
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+        const observer = new MutationObserver(function(mutations, observer) {
+            console.log(mutations, observer)
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
+            const $lastInput = $inputWrappers.last().find('input#img-frame')
             const lastInputFilename = $inputWrappers.last()[0].innerText
-
-            // console.log('$lastInput (' + $lastInput.length + '): ' + lastInputFilename)
-            // console.log($lastInput[0])
-            // console.log($lastInput[0].files)
-            // console.log($lastInput[0].files[0])
-
+            console.log($lastInput)
+            console.log(lastInputFilename)
+            
             readURL($lastInput[0])
             fixHeight($('.img-wrapper'))
+
+            /* Change button text if photo on the page */
+            function insertArrayAt(array, index, arrayToInsert) {
+                Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
+                return array;
+            }
+
+            if ($(this).children('.multilinefile-img').length > 0) {
+                $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
+            }
+            else {
+                $button[0].value = buttonText;
+            }
         })
+        observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
     }
     else {
         $('input#img-frame').change(function() {
@@ -105,8 +103,9 @@ $(document).ready(function(){
             fixHeight($('.cameraButton'))
         })
     }
+    
 
-    /* auto format phone number */
+    /* Auto-format phone number */
     // https://stackoverflow.com/questions/30058927/format-a-phone-number-as-a-user-types-using-pure-javascript
     const isNumericInput = (event) => {
         const key = event.keyCode;
