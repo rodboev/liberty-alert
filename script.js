@@ -66,34 +66,40 @@ $(document).ready(function(){
         }
     )}
 
+    const $button = $('#mfcf7_zl_add_file');
+    const buttonText = $button[0].value;
+    function updateButton(length) {
+        function insertArrayAt(array, index, arrayToInsert) {
+            Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
+            return array;
+        }
+        if (length > 0) {
+            $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
+        }
+        else {
+            $button[0].value = buttonText;
+        }
+    }
+
     if ($("#mfcf7_zl_multifilecontainer").length == 1) {
-        const $button = $('#mfcf7_zl_add_file');
-        const buttonText = $button[0].value;
-
-        // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-        const observer = new MutationObserver(function(mutations, observer) {
-            console.log(mutations, observer)
+        $("#mfcf7_zl_multifilecontainer").change(function() {
             const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
-            const $lastInput = $inputWrappers.last().find('input#img-frame')
-            const lastInputFilename = $inputWrappers.last()[0].innerText
-            console.log($lastInput)
-            console.log(lastInputFilename)
-            
+            const $lastInput = $inputWrappers.last().find('input#img-frame') 
+
             readURL($lastInput[0])
-            fixHeight($('.img-wrapper'))
+            const $imgWrappers = $inputWrappers.find('.img-wrapper');
+            fixHeight($imgWrappers)
+            updateButton($imgWrappers.length);
+        })
 
-            /* Change button text if photo on the page */
-            function insertArrayAt(array, index, arrayToInsert) {
-                Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
-                return array;
-            }
+        /* Change button text if photo on page */
+        // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 
-            if ($(this).children('.multilinefile-img').length > 0) {
-                $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
-            }
-            else {
-                $button[0].value = buttonText;
-            }
+        const observer = new MutationObserver(function() {
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
+            const $imgWrappers = $inputWrappers.find('.img-wrapper');
+            fixHeight($imgWrappers)
+            updateButton($imgWrappers.length);
         })
         observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
     }
@@ -103,7 +109,6 @@ $(document).ready(function(){
             fixHeight($('.cameraButton'))
         })
     }
-    
 
     /* Auto-format phone number */
     // https://stackoverflow.com/questions/30058927/format-a-phone-number-as-a-user-types-using-pure-javascript
