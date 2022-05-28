@@ -75,7 +75,8 @@ $(document).ready(function(){
     })
     
     const $button = $('#mfcf7_zl_add_file')
-    const buttonText = $button[0].value;
+    const buttonTextOrig = $button[0].value
+    const buttonText = document.querySelector($button[0]).value
     function updateImgs(length) {
         console.log('updating images to: ' + length)
         function insertArrayAt(array, index, arrayToInsert) {
@@ -84,10 +85,10 @@ $(document).ready(function(){
         }
         
         if (length == 0) {
-            $button[0].value = buttonText;
+            buttonText = buttonTextOrig;
         }
         else {
-            $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
+            if (buttonTextOrig.startsWith('Start')) buttonText = buttonTextorig.replace('Start', 'Keep')
         }
 
         const $imgWrapper = $('.img-wrapper').last();
