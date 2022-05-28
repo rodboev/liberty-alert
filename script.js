@@ -24,7 +24,6 @@ $(document).ready(function(){
     /* Show thumbnail after taking photo */    
     // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
     function readURL(input) {
-
         let preview;
         if ($("#mfcf7_zl_multifilecontainer").length == 1) {
             $(input).after('<div class="img-wrapper"><img class="loaded-img" src=""></div>')
@@ -66,19 +65,33 @@ $(document).ready(function(){
         }
     )}
 
-    const $button = $('#mfcf7_zl_add_file');
+    const deleteFile = Object.values(document.getElementsByClassName('mfcf7_zl_delete_file'))
+    deleteFile.forEach(link => {
+        addEventListener('click', function() {
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
+            const $imgWrappers = $inputWrappers.find($('.img-wrapper'))
+            updateImgs($imgWrappers.length);
+        })
+    })
+    
+    const $button = $('#mfcf7_zl_add_file')
     const buttonText = $button[0].value;
-    function updateButton(length) {
+    function updateImgs(length) {
+        console.log('updating images to: ' + length)
         function insertArrayAt(array, index, arrayToInsert) {
             Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
             return array;
         }
-        if (length > 0) {
-            $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
-        }
-        else {
+        
+        if (length == 0) {
             $button[0].value = buttonText;
         }
+        else {
+            $button[0].value = insertArrayAt(buttonText.split(' '), 1, 'another').join(' ')
+        }
+
+        const $imgWrapper = $('.img-wrapper').last();
+        $imgWrapper.append($imgWrapper.nextAll(deleteFile))
     }
 
     if ($("#mfcf7_zl_multifilecontainer").length == 1) {
@@ -89,7 +102,7 @@ $(document).ready(function(){
             readURL($lastInput[0])
             const $imgWrappers = $inputWrappers.find('.img-wrapper');
             fixHeight($imgWrappers)
-            updateButton($imgWrappers.length);
+            updateImgs($imgWrappers.length);
         })
 
         /* Change button text if photo on page */
@@ -99,7 +112,7 @@ $(document).ready(function(){
             const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
             const $imgWrappers = $inputWrappers.find('.img-wrapper');
             fixHeight($imgWrappers)
-            updateButton($imgWrappers.length);
+            updateImgs($imgWrappers.length);
         })
         observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
     }
