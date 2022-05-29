@@ -65,14 +65,18 @@ $(document).ready(function(){
         }
     )}
 
-    const deleteFile = Object.values(document.getElementsByClassName('mfcf7_zl_delete_file'));
-    deleteFile.forEach(link => {
-        addEventListener('click', function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-            const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
-            updateImgs($imgWrappers.length);
-        })
-    })
+    (function() {
+        if (typeof deleteFile !== 'undefined') {
+            const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
+            const $imgWrapper = $('.img-wrapper').last();
+            $imgWrapper.append($imgWrapper.nextAll(deleteFile))
+            deleteFile.addEventListener('click', function() {
+                const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+                const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
+                updateImgs($imgWrappers.length);
+            })
+        }
+    })();
     
     if (typeof $button !== 'undefined') {
         const $button = $('#mfcf7_zl_add_file');
