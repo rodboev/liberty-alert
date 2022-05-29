@@ -3,22 +3,22 @@ $(document).ready(function(){
     $("input[type='file']")
         .attr('accept', 'image/*')
         .attr('capture', 'camera')
-        .attr('id', 'img-frame')
+        .attr('id', 'img-frame');
     // "capture=environment" prefers front facing
     
     /* Pull company name from query string and add to page */
-    const getObjSize = obj => Object.keys(obj).length
-    const queryString = new URLSearchParams(window.location.search)
-    const queryStringObj = Object.fromEntries(queryString.entries())
-    const company = queryStringObj.company
-    const editMode = queryStringObj.vc_editable
-    const companyLine = document.querySelector('#company-name')
-    const companyName = companyLine.querySelector('#company-name-1')
+    const getObjSize = obj => Object.keys(obj).length;
+    const queryString = new URLSearchParams(window.location.search);
+    const queryStringObj = Object.fromEntries(queryString.entries());
+    const company = queryStringObj.company;
+    const editMode = queryStringObj.vc_editable;
+    const companyLine = document.querySelector('#company-name');
+    const companyName = companyLine.querySelector('#company-name-1');
     if (company && companyName) {
-        companyName.innerText = company
+        companyName.innerText = company;
     }
     else if (!editMode) {
-        companyLine.style.display = 'none'
+        companyLine.style.display = 'none';
     }
     
     /* Show thumbnail after taking photo */    
@@ -26,23 +26,23 @@ $(document).ready(function(){
     function readURL(input) {
         let preview;
         if ($("#mfcf7_zl_multifilecontainer").length == 1) {
-            $(input).after('<div class="img-wrapper"><img class="loaded-img" src=""></div>')
-            preview = $(input).next().find('.loaded-img')[0]
+            $(input).after('<div class="img-wrapper"><img class="loaded-img" src=""></div>');
+            preview = $(input).next().find('.loaded-img')[0];
         }
         else {
-            preview = $('.cameraButton .loaded-img')[0]
+            preview = $('.cameraButton .loaded-img')[0];
         }
         
-        const reader = new FileReader()
+        const reader = new FileReader();
 
-        const selectedFile = input.files[0]
+        const selectedFile = input.files[0];
         if (selectedFile) {
             reader.addEventListener('load', function(event) {
                 if (event.type === "load") {
-                    preview.src = reader.result
+                    preview.src = reader.result;
                 }
             })
-            reader.readAsDataURL(selectedFile)
+            reader.readAsDataURL(selectedFile);
         }
     }
 
@@ -65,62 +65,82 @@ $(document).ready(function(){
         }
     )}
 
-    const deleteFile = Object.values(document.getElementsByClassName('mfcf7_zl_delete_file'))
+    const deleteFile = Object.values(document.getElementsByClassName('mfcf7_zl_delete_file'));
     deleteFile.forEach(link => {
         addEventListener('click', function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
-            const $imgWrappers = $inputWrappers.find($('.img-wrapper'))
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+            const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
             updateImgs($imgWrappers.length);
         })
     })
     
-    const $button = $('#mfcf7_zl_add_file')
-    const buttonTextOrig = $button[0].value
-    const buttonText = document.querySelector($button[0]).value
-    function updateImgs(length) {
-        console.log('updating images to: ' + length)
-        function insertArrayAt(array, index, arrayToInsert) {
-            Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
-            return array;
+    if (typeof $button !== 'undefined') {
+        const $button = $('#mfcf7_zl_add_file');
+        const buttonTextOrig = $button[0].value;
+        const buttonText = document.querySelector($button[0]).value;
+    }
+
+    function updateButton(length) {
+        if (typeof $button !== 'undefined') {
+            if (length == 0) {
+                $button[0].value = buttonText;
+            }
+            else if (buttonTextOrig.startsWith('Start')) {
+                $button[0].value =  buttonTextorig.replace('Start', 'Keep');
+            }
         }
-        
-        if (length == 0) {
-            buttonText = buttonTextOrig;
+    }
+
+    function updateImgs(length) {
+        console.log('updating images to: ' + length);
+        const $imgWrapper = $('.img-wrapper').last();
+        $imgWrapper.append($imgWrapper.nextAll(deleteFile));
+        if ($("#mfcf7_zl_multifilecontainer").length == 1) {
+            $("#mfcf7_zl_multifilecontainer").change(function() {
+                const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+                const $lastInput = $inputWrappers.last().find('input#img-frame');
+
+                readURL($lastInput[0]);
+                const $imgWrappers = $inputWrappers.find('.img-wrapper');
+                fixHeight($imgWrappers)
+                updateButton($imgWrappers.length);
+                updateImgs($imgWrappers.length);
+            })
         }
         else {
-            if (buttonTextOrig.startsWith('Start')) buttonText = buttonTextorig.replace('Start', 'Keep')
+            $('input#img-frame').change(function() {
+                readURL($('input#img-frame')[0]);
+                fixHeight($('.cameraButton'));
+            })
         }
-
-        const $imgWrapper = $('.img-wrapper').last();
-        $imgWrapper.append($imgWrapper.nextAll(deleteFile))
     }
 
     if ($("#mfcf7_zl_multifilecontainer").length == 1) {
         $("#mfcf7_zl_multifilecontainer").change(function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
-            const $lastInput = $inputWrappers.last().find('input#img-frame') 
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+            const $lastInput = $inputWrappers.last().find('input#img-frame');
 
-            readURL($lastInput[0])
+            readURL($lastInput[0]);
             const $imgWrappers = $inputWrappers.find('.img-wrapper');
-            fixHeight($imgWrappers)
-            updateImgs($imgWrappers.length);
+            fixHeight($imgWrappers);
+            updateButton($imgWrappers.length);
         })
 
         /* Change button text if photo on page */
         // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 
         const observer = new MutationObserver(function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img')
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
             const $imgWrappers = $inputWrappers.find('.img-wrapper');
-            fixHeight($imgWrappers)
-            updateImgs($imgWrappers.length);
+            fixHeight($imgWrappers);
+            updateButton($imgWrappers.length);
         })
         observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
     }
     else {
         $('input#img-frame').change(function() {
-            readURL($('input#img-frame')[0])
-            fixHeight($('.cameraButton'))
+            readURL($('input#img-frame')[0]);
+            fixHeight($('.cameraButton'));
         })
     }
 
@@ -130,7 +150,7 @@ $(document).ready(function(){
         const key = event.keyCode;
         return ((key >= 48 && key <= 57) || // Allow number line
             (key >= 96 && key <= 105) // Allow number pad
-        )
+        );
     }
     
     const isModifierKey = (event) => {
@@ -142,28 +162,28 @@ $(document).ready(function(){
                 // Allow Ctrl/Command + A,C,V,X,Z
                 (event.ctrlKey === true || event.metaKey === true) &&
                 (key === 65 || key === 67 || key === 86 || key === 88 || key === 90)
-            )
+            );
     }
     
     const enforceFormat = (event) => {
         // Input must be of a valid number format or a modifier key, and not longer than ten digits
         if(!isNumericInput(event) && !isModifierKey(event)){
-            event.preventDefault()
+            event.preventDefault();
         }
     }
     
     const formatToPhone = (event) => {
         if(isModifierKey(event)) {return}
-        const input = event.target.value.replace(/\D/g,'').substring(0,10) // First ten digits of input only
-        const areaCode = input.substring(0,3)
-        const middle = input.substring(3,6)
-        const last = input.substring(6,10)
-        if(input.length > 6){event.target.value = `(${areaCode}) ${middle} - ${last}`}
-        else if(input.length > 3){event.target.value = `(${areaCode}) ${middle}`}
-        else if(input.length > 0){event.target.value = `(${areaCode}`}
+        const input = event.target.value.replace(/\D/g,'').substring(0,10); // First ten digits of input only
+        const areaCode = input.substring(0,3);
+        const middle = input.substring(3,6);
+        const last = input.substring(6,10);
+        if(input.length > 6){event.target.value = `(${areaCode}) ${middle} - ${last}`;}
+        else if(input.length > 3){event.target.value = `(${areaCode}) ${middle}`;}
+        else if(input.length > 0){event.target.value = `(${areaCode}`;}
     }
     
-    const inputElement = document.querySelector('input[type="tel"')
-    inputElement.addEventListener('keydown',enforceFormat)
-    inputElement.addEventListener('keyup',formatToPhone)
-})
+    const inputElement = document.querySelector('input[type="tel"');
+    inputElement.addEventListener('keydown',enforceFormat);
+    inputElement.addEventListener('keyup',formatToPhone);
+});

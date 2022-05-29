@@ -61,21 +61,16 @@ label.cameraButton,
     padding: 0.5em 1.5em !important;
 }
 
-.wpcf7-form [id*="add_file"].button {
+form[action*="multi-file-uploader"] .button {
     margin-bottom: 20px;
 }
-.wpcf7-form .img-wrapper {
+form[action*="multi-file-uploader"] .img-wrapper {
     display: inline-block;
 }
-.wpcf7-form .mfcf7-zl-multifile-name {
+form[action*="multi-file-uploader"] .mfcf7-zl-multifile-name {
     display: none !important;
 }
 
-.img-wrapper .mfcf7_zl_delete_file {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: white;
-    padding: 0 5px;
-    border-radius: 5px;
+.delete-file img.emoji {
+    vertical-align: 0 !important;
 }
