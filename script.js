@@ -46,28 +46,34 @@ $(document).ready(function(){
         }
     }
 
-    function fixHeight($el) {
-        $('.loaded-img').load(function() {
-            if ($el.length == 1) {
-                $el.css({
-                    'height': $('.loaded-img').height(),
-                    'width': $('.loaded-img').width(),
-                })
+    function fixHeight($imgParent) {
+        const $img = $imgParent.children('img').eq(0);
+        $img.load(function() {
+            const scale = $('.container').width() / $imgParent.width();
+            const width = $imgParent.width() / scale;
+            const height = $img.height() * (1 / scale);
+            const ratio = width / height * scale;
+            console.log(scale, width, height, ratio)
+            if ($imgParent.length == 1) {
+                $imgParent.css({
+                    'width': width * scale,
+                    'height': height * scale,
+                });
             }
             else {
-                $el.each(function(i, obj) {
-                    $(this).css({
-                        'height': $(this).children($el).eq(0).height(),
-                        'width': $(this).children($el).eq(0).width()
-                    })
+                $imgParent.each(function(i, obj) {
+                    $imgParent.css({
+                        'width': width * scale,
+                        'height': height * scale,
+                    });
                 })
             }
         }
     )}
 
-    (function() {
+    function moveDeleteButton() {
+        const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
         if (typeof deleteFile !== 'undefined') {
-            const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
             const $imgWrapper = $('.img-wrapper').last();
             $imgWrapper.append($imgWrapper.nextAll(deleteFile))
             deleteFile.addEventListener('click', function() {
@@ -76,7 +82,7 @@ $(document).ready(function(){
                 updateImgs($imgWrappers.length);
             })
         }
-    })();
+    };
     
     if (typeof $button !== 'undefined') {
         const $button = $('#mfcf7_zl_add_file');
@@ -109,6 +115,7 @@ $(document).ready(function(){
                 fixHeight($imgWrappers)
                 updateButton($imgWrappers.length);
                 updateImgs($imgWrappers.length);
+                moveDeleteButton();
             })
         }
         else {

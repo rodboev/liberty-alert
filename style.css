@@ -62,15 +62,11 @@ label.cameraButton,
 }
 
 form[action*="multi-file-uploader"] .button {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 form[action*="multi-file-uploader"] .img-wrapper {
     display: inline-block;
 }
 form[action*="multi-file-uploader"] .mfcf7-zl-multifile-name {
     display: none !important;
-}
-
-.delete-file img.emoji {
-    vertical-align: 0 !important;
 }
