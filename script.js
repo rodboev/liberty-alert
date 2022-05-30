@@ -47,13 +47,11 @@ $(document).ready(function(){
     }
 
     function fixHeight($imgParent) {
-        const $img = $imgParent.children('img').eq(0);
+        let $img = $imgParent.children('img').eq(0);
         $img.load(function() {
             const scale = $('.container').width() / $imgParent.width();
             const width = $imgParent.width() / scale;
             const height = $img.height() * (1 / scale);
-            const ratio = width / height * scale;
-            console.log(scale, width, height, ratio)
             if ($imgParent.length == 1) {
                 $imgParent.css({
                     'width': width * scale,
@@ -61,34 +59,20 @@ $(document).ready(function(){
                 });
             }
             else {
-                $imgParent.each(function(i, obj) {
-                    $imgParent.css({
+                $img = $(this).find('.loaded-img');
+                $imgParent = $img.parent();
+                $imgParent.each(function() {
+                    const width = $(this).width() / scale;
+                    const height = $img.height() * (1 / scale);
+                    $(this).css({
                         'width': width * scale,
                         'height': height * scale,
                     });
                 })
             }
+            moveDeleteButton();
         }
     )}
-
-    function moveDeleteButton() {
-        const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
-        if (typeof deleteFile !== 'undefined') {
-            const $imgWrapper = $('.img-wrapper').last();
-            $imgWrapper.append($imgWrapper.nextAll(deleteFile))
-            deleteFile.addEventListener('click', function() {
-                const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
-                updateImgs($imgWrappers.length);
-            })
-        }
-    };
-    
-    if (typeof $button !== 'undefined') {
-        const $button = $('#mfcf7_zl_add_file');
-        const buttonTextOrig = $button[0].value;
-        const buttonText = document.querySelector($button[0]).value;
-    }
 
     function updateButton(length) {
         if (typeof $button !== 'undefined') {
@@ -101,15 +85,27 @@ $(document).ready(function(){
         }
     }
 
-    function updateImgs(length) {
-        console.log('updating images to: ' + length);
+    function moveDeleteButton() {
+        const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+        const $deleteButton = $inputWrappers.find(($('.mfcf7_zl_delete_file')))
         const $imgWrapper = $('.img-wrapper').last();
-        $imgWrapper.append($imgWrapper.nextAll(deleteFile));
+
+        $imgWrapper.append($imgWrapper.nextAll($deleteButton));
+        $deleteButton.click(function() {
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+            const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
+            updateImgs($imgWrappers.length);
+        });
+    }
+
+    function updateImgs(length) {
+        const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+        const $deleteButton = $inputWrappers.find(($('.mfcf7_zl_delete_file')))
+        const $imgWrapper = $('.img-wrapper').last();
+
         if ($("#mfcf7_zl_multifilecontainer").length == 1) {
             $("#mfcf7_zl_multifilecontainer").change(function() {
-                const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
                 const $lastInput = $inputWrappers.last().find('input#img-frame');
-
                 readURL($lastInput[0]);
                 const $imgWrappers = $inputWrappers.find('.img-wrapper');
                 fixHeight($imgWrappers)
