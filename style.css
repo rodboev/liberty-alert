@@ -59,14 +59,25 @@ label.cameraButton,
 }
 .pix-contact7-form input.button {
     padding: 0.5em 1.5em !important;
+    margin-bottom: 20px;
+    margin-right: 10px;
 }
 
-form[action*="multi-file-uploader"] .button {
+#mfcf7_zl_multifilecontainer .button {
     margin-bottom: 40px;
 }
-form[action*="multi-file-uploader"] .img-wrapper {
+#mfcf7_zl_multifilecontainer .img-wrapper {
     display: inline-block;
 }
-form[action*="multi-file-uploader"] .mfcf7-zl-multifile-name {
+#mfcf7_zl_multifilecontainer .mfcf7-zl-multifile-name {
     display: none !important;
+}
+
+.img-wrapper .mfcf7_zl_delete_file {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  padding: 0 5px;
+  border-radius: 5px;
 }
