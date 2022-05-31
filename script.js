@@ -72,19 +72,21 @@ $(document).ready(function(){
             $imgWrapper.append($imgWrapper.nextAll(deleteFile))
             deleteFile.addEventListener('click', function() {
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $imgWrappers = $inputWrappers.find($('.img-wrapper'));
+                const $imgWrappers = $inputWrappers.find('.img-wrapper').last();
                 updateImgs($imgWrappers.length);
                 updateButton($imgWrappers.length);
             })
         }
     }
     
+    const $button = $('#mfcf7_zl_add_file');
+    let buttonText;
+    if ($button) {
+        buttonText = $button[0].value;
+    }
     function updateButton(length) {
-        console.log('photos on page: ' + length)
-        const $button = $('#mfcf7_zl_add_file');
-        const buttonText = $button[0].value;
         if ($button) {
-            if (buttonText.startsWith('Start')) {
+            if (length > 0) {
                 $button[0].value = buttonText.replace('Start', 'Keep');
             }
             else {
@@ -109,9 +111,6 @@ $(document).ready(function(){
                 updateImgs($imgWrappers.length);
                 updateButton($imgWrappers.length);
                 moveDeleteButton();
-                $imgWrappers.find($('img[src]')).load(function() {
-                    moveDeleteButton();
-                });
             })
         }
         else {
@@ -132,16 +131,18 @@ $(document).ready(function(){
             fixHeight($imgWrappers);
             updateButton($imgWrappers.length);
             moveDeleteButton();
+        });
 
-            /* TODO: Change button text if photo on page */
-            // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-            const observer = new MutationObserver(function() {
-                const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $imgWrappers = $inputWrappers.find('.img-wrapper');
-                fixHeight($imgWrappers);
-            })
-            observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
+        /* TODO: Change button text back to default if no photos on page */
+        // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+        const observer = new MutationObserver(function() {
+            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+            const $imgWrappers = $inputWrappers.find('.img-wrapper');
+            console.log('$imageWrappers.length = ' + $imgWrappers.length);
+            fixHeight($imgWrappers);
+            updateButton($imgWrappers.length);
         })
+        observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
     }
     else {
         $('input#img-frame').change(function() {
