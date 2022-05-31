@@ -1,21 +1,21 @@
-label.cameraButton {
+form[action*="single-file-uploader"] .cameraButton {
   border: 0 none;
   display: flex;
   justify-content: center;
   text-align: center;
   flex-direction: column;
   cursor: pointer;
-}
-label.cameraButton,
-.img-wrapper {
-  width: 300px;
   height: calc(300px/3*4);
-  max-width: 80vw;
   max-height: calc(80vw/3*4);
+}
+form[action*="single-file-uploader"] .cameraButton,
+#mfcf7_zl_multifilecontainer .img-wrapper {
+  width: 300px;
+  max-width: 80vw;
   position: relative;
   overflow: hidden;
 }
-label.cameraButton input {
+form[action*="single-file-uploader"] .cameraButton input {
   display: none;
 }
 #loaded-img,
@@ -44,12 +44,8 @@ label.cameraButton input {
 .pix-contact7-form label:not(.cameraButton) {
   color: black;
 }
-.pix-contact7-form input[type="submit"] {
-  margin-top: 1em;
-  padding: 0.5em 1.5em !important;
-}
 
-label.cameraButton,
+form[action*="single-file-uploader"] .cameraButton,
 .pix-contact7-form input[type="submit"],
 .button,
 .img-wrapper {
@@ -57,13 +53,13 @@ label.cameraButton,
   color: white;
   border-radius: 0.5em
 }
-.pix-contact7-form input.button {
-    padding: 0.5em 1.5em !important;
-    margin-bottom: 20px;
-    margin-right: 10px;
+
+.wpcf7-response-output {
+  border-radius: 0.5em
+  
 }
 
-#mfcf7_zl_multifilecontainer .button {
+#mfcf7_zl_multifilecontainer .button[type="submit"] {
     margin-bottom: 40px;
 }
 #mfcf7_zl_multifilecontainer .img-wrapper {
@@ -80,4 +76,34 @@ label.cameraButton,
   background: white;
   padding: 0 5px;
   border-radius: 5px;
+}
+
+.pix-contact7-form p:last-child {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.pix-contact7-form .button {
+  padding: 0.5em 1.5em !important;
+  margin-bottom: 20px;
+  margin-right: 10px;
+}
+.pix-contact7-form input[type="submit"] {
+  margin: 10px 0 20px;
+  padding: 0.5em 1.5em !important;
+}
+
+.wpcf7 form .wpcf7-response-output {
+  border: 0 none !important;
+  padding: 0.5em 1em;
+  margin: 0;
+  display: inline-block;
+  background: #999;
+  color: white;
+}
+.wpcf7 form.invalid .wpcf7-response-output, .wpcf7 form.unaccepted .wpcf7-response-output, .wpcf7 form.payment-required .wpcf7-response-output {
+  background: #dc3232;
+}
+.wpcf7 form.sent .wpcf7-response-output {
+  background: darkgreen;
 }
