@@ -15,6 +15,12 @@ form[action*="single-file-uploader"] .cameraButton,
   position: relative;
   overflow: hidden;
 }
+form[action*="single-file-uploader"] .cameraButton,
+#mfcf7_zl_multifilecontainer .img-wrapper { /* debug styles for empty images  */
+  min-width: 80px;
+  min-height: 80px;
+  border: 1px solid #999;
+}
 form[action*="single-file-uploader"] .cameraButton input {
   display: none;
 }

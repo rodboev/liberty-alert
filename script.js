@@ -7,7 +7,6 @@ $(document).ready(function(){
     // "capture=environment" prefers front facing
     
     /* Pull company name from query string and add to page */
-    const getObjSize = obj => Object.keys(obj).length;
     const queryString = new URLSearchParams(window.location.search);
     const queryStringObj = Object.fromEntries(queryString.entries());
     const company = queryStringObj.company;
@@ -21,11 +20,16 @@ $(document).ready(function(){
         companyLine.style.display = 'none';
     }
     
-    /* Show thumbnail after taking photo */    
+    /* Generate thumbnail from input field metadata, show on page */    
     // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
     function readURL(input) {
+        input;
+        input.files;
+        input.files[0];
+        const selectedFile = input.files[0];
+        console.log('rendering ' + selectedFile);
         let preview;
-        if ($("#mfcf7_zl_multifilecontainer").length == 1) {
+        if ($("#mfcf7_zl_multifilecontainer")) {
             $(input).after('<div class="img-wrapper"><img class="loaded-img"></div>');
             preview = $(input).next().find('.loaded-img')[0];
         }
@@ -35,30 +39,30 @@ $(document).ready(function(){
         
         const reader = new FileReader();
 
-        const selectedFile = input.files[0];
+//        const selectedFile = input.files[0];
         if (selectedFile) {
             reader.addEventListener('load', function(event) {
-                if (event.type === "load") {
+                // if (event.type === "load") {
                     preview.src = reader.result;
-                }
+                // }
             })
             reader.readAsDataURL(selectedFile);
         }
     }
 
-    function fixHeight($el) {
+    function fixHeight(imgInput) {
         $('.loaded-img').load(function() {
-            if ($el.length == 1) {
-                $el.css({
+            if (imgInput.length == 1) {
+                imgInput.css({
                     'height': $('.loaded-img').height(),
                     'width': $('.loaded-img').width(),
                 })
             }
             else {
-                $el.each(function(i, obj) {
+                imgInput.each(function(i, obj) {
                     $(this).css({
-                        'height': $(this).children($el).eq(0).height(),
-                        'width': $(this).children($el).eq(0).width()
+                        'height': $(this).children(imgInput).eq(0).height(),
+                        'width': $(this).children(imgInput).eq(0).width(),
                     })
                 })
             }
@@ -68,50 +72,56 @@ $(document).ready(function(){
     function moveDeleteButton() {
         const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
         if (typeof deleteFile !== 'undefined') {
+            /* TODO: Select with `this` instead of .last() */
             const $imgWrapper = $('.img-wrapper').last();
             $imgWrapper.append($imgWrapper.nextAll(deleteFile))
             deleteFile.addEventListener('click', function() {
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $imgWrappers = $inputWrappers.find('.img-wrapper').last();
-                updateImgs($imgWrappers.length);
-                updateButton($imgWrappers.length);
+                const $imgWrapper = $inputWrappers.find('.img-wrapper').last();
+                updateImgs($imgWrapper.length);
+                updateButton($imgWrapper.length);
             })
         }
     }
     
     const $button = $('#mfcf7_zl_add_file');
-    let buttonText;
-    if ($button) {
-        buttonText = $button[0].value;
-    }
-    function updateButton(length) {
+    const buttonTextOrig = $button ? $button[0].value : false;
+    function updateButton(numPhotos) {
         if ($button) {
-            if (length > 0) {
-                $button[0].value = buttonText.replace('Start', 'Keep');
+            if (numPhotos > 0) {
+                $button[0].value = buttonTextOrig.replace('Start', 'Keep');
             }
             else {
-                $button[0].value = buttonText;
+                $button[0].value = buttonTextOrig;
             }
         }
     }
 
     function updateImgs(length) {
-        console.log('updating images to: ' + length);
-        const $imgWrapper = $('.img-wrapper').last();
-        $imgWrapper.append($imgWrapper.nextAll(deleteFile));
-
-        if ($("#mfcf7_zl_multifilecontainer").length == 1) {
-            $("#mfcf7_zl_multifilecontainer").change(function() {
+        if ($("#mfcf7_zl_multifilecontainer")) {
+            $('input#img-frame').change(function() {
+                console.log('[Change detected] Images currently uploaded: ' + length);
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $lastInput = $inputWrappers.last().find('input#img-frame');
+                const $inputLast = $inputWrappers.find('input#img-frame').last();
+                const $imgWrapper = $inputWrappers.find('.img-wrapper').last();
+                const $file = $inputWrappers.find('.mfcf7-zl-multifile-name');
+                if ($file[0]) {
+                    console.log($file[0].trim());
+                    readURL($inputLast[0]);
+                    
+                    console.log('Actual number of images: ' + $imgWrapper.length);
 
-                readURL($lastInput[0]);
-                const $imgWrappers = $inputWrappers.find('.img-wrapper');
-                fixHeight($imgWrappers);
-                updateImgs($imgWrappers.length);
-                updateButton($imgWrappers.length);
-                moveDeleteButton();
-            })
+                    const filename = $file[0].innerText.trim();
+                    console.log('Filename: ' + filename);
+                    
+                    fixHeight($imgWrapper);
+                    updateButton($imgWrapper.length);
+                    moveDeleteButton();
+                }
+                else {
+                    console.error('No file found');
+                }
+            });
         }
         else {
             $('input#img-frame').change(function() {
@@ -120,36 +130,31 @@ $(document).ready(function(){
             })
         }
     }
-    
-    if ($("#mfcf7_zl_multifilecontainer").length == 1) {
-        $("#mfcf7_zl_multifilecontainer").change(function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-            const $lastInput = $inputWrappers.last().find('input#img-frame');
-            
-            readURL($lastInput[0]);
-            const $imgWrappers = $inputWrappers.find('.img-wrapper');
-            fixHeight($imgWrappers);
-            updateButton($imgWrappers.length);
-            moveDeleteButton();
-        });
 
-        /* TODO: Change button text back to default if no photos on page */
-        // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-        const observer = new MutationObserver(function() {
-            const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-            const $imgWrappers = $inputWrappers.find('.img-wrapper');
-            console.log('$imageWrappers.length = ' + $imgWrappers.length);
-            fixHeight($imgWrappers);
-            updateButton($imgWrappers.length);
-        })
-        observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
-    }
-    else {
-        $('input#img-frame').change(function() {
-            readURL($('input#img-frame')[0]);
-            fixHeight($('.cameraButton'));
-        })
-    }
+    /* TODO: Change button text back to default if no photos on page */
+    // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    const observer = new MutationObserver(function() {
+        const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+        const $imgWrappers = $inputWrappers.find('.img-wrapper');
+        // fixHeight($imgWrappers);
+        // updateButton($imgWrappers.length);
+        // updateImgs($imgWrappers.length);
+        console.log('[Mutation observed] Updating button based on ' + $imgWrappers.length + ' images');
+    })
+    observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
+
+    /* Proxy event listener */
+    $('#mfcf7_zl_add_file').on('click tap', function() {
+        console.log('Clicked add photo');
+        console.log($("#mfcf7_zl_multifilecontainer")[0]);
+        const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
+        const $imgWrappers = $inputWrappers.find('.img-wrapper').last();
+        updateImgs(1);
+    });
+
+/* ---------------------------- *
+ * Third-party code starts here *
+------------------------------- */
 
     /* Auto-format phone number */
     // https://stackoverflow.com/questions/30058927/format-a-phone-number-as-a-user-types-using-pure-javascript
