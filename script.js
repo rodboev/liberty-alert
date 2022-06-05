@@ -23,11 +23,8 @@ $(document).ready(function(){
     /* Generate thumbnail from input field metadata, show on page */    
     // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
     function readURL(input) {
-        input;
-        input.files;
-        input.files[0];
         const selectedFile = input.files[0];
-        console.log('rendering ' + selectedFile);
+        console.log('rendering ' + selectedFile.name);
         let preview;
         if ($("#mfcf7_zl_multifilecontainer")) {
             $(input).after('<div class="img-wrapper"><img class="loaded-img"></div>');
@@ -39,47 +36,34 @@ $(document).ready(function(){
         
         const reader = new FileReader();
 
-//        const selectedFile = input.files[0];
         if (selectedFile) {
             reader.addEventListener('load', function(event) {
-                // if (event.type === "load") {
+                if (event.type === "load") {
                     preview.src = reader.result;
-                // }
+                    
+                    preview.onload = function() {
+                        console.log('image loaded');
+                        $(preview).parent().css({
+                            'width': this.width,
+                            'height': this.height,
+                        });
+                    }
+                }
             })
             reader.readAsDataURL(selectedFile);
         }
     }
 
-    function fixHeight(imgInput) {
-        $('.loaded-img').load(function() {
-            if (imgInput.length == 1) {
-                imgInput.css({
-                    'height': $('.loaded-img').height(),
-                    'width': $('.loaded-img').width(),
-                })
-            }
-            else {
-                imgInput.each(function(i, obj) {
-                    $(this).css({
-                        'height': $(this).children(imgInput).eq(0).height(),
-                        'width': $(this).children(imgInput).eq(0).width(),
-                    })
-                })
-            }
-        }
-    )}
-
     function moveDeleteButton() {
         const deleteFile = document.querySelector('.multilinefile-img > .mfcf7_zl_delete_file');
         if (typeof deleteFile !== 'undefined') {
             /* TODO: Select with `this` instead of .last() */
-            const $imgWrapper = $('.img-wrapper').last();
-            $imgWrapper.append($imgWrapper.nextAll(deleteFile))
+            const $imgWrapperLast = $('.img-wrapper').last();
+            $imgWrapperLast.append($imgWrapperLast.nextAll(deleteFile))
             deleteFile.addEventListener('click', function() {
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-                const $imgWrapper = $inputWrappers.find('.img-wrapper').last();
-                updateImgs($imgWrapper.length);
-                updateButton($imgWrapper.length);
+                const $imgWrapperLast = $inputWrappers.find('.img-wrapper').last();
+                updateImgs($imgWrapperLast.length);
             })
         }
     }
@@ -103,19 +87,14 @@ $(document).ready(function(){
                 console.log('[Change detected] Images currently uploaded: ' + length);
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
                 const $inputLast = $inputWrappers.find('input#img-frame').last();
-                const $imgWrapper = $inputWrappers.find('.img-wrapper').last();
+                const $imgWrapperLast = $inputWrappers.find('.img-wrapper').last();
                 const $file = $inputWrappers.find('.mfcf7-zl-multifile-name');
                 if ($file[0]) {
-                    console.log($file[0].trim());
+                    // console.log($file[0].name);
                     readURL($inputLast[0]);
-                    
-                    console.log('Actual number of images: ' + $imgWrapper.length);
-
                     const filename = $file[0].innerText.trim();
                     console.log('Filename: ' + filename);
-                    
-                    fixHeight($imgWrapper);
-                    updateButton($imgWrapper.length);
+
                     moveDeleteButton();
                 }
                 else {
@@ -126,7 +105,6 @@ $(document).ready(function(){
         else {
             $('input#img-frame').change(function() {
                 readURL($('input#img-frame')[0]);
-                fixHeight($('.cameraButton'));
             })
         }
     }
@@ -136,10 +114,9 @@ $(document).ready(function(){
     const observer = new MutationObserver(function() {
         const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
         const $imgWrappers = $inputWrappers.find('.img-wrapper');
-        // fixHeight($imgWrappers);
-        // updateButton($imgWrappers.length);
         // updateImgs($imgWrappers.length);
         console.log('[Mutation observed] Updating button based on ' + $imgWrappers.length + ' images');
+        updateButton($imgWrappers.length);
     })
     observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
 
