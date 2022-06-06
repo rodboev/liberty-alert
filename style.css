@@ -1,3 +1,4 @@
+/* Replace single file uploader button with dark gray box */
 form[action*="single-file-uploader"] .cameraButton {
   border: 0 none;
   display: flex;
@@ -15,12 +16,6 @@ form[action*="single-file-uploader"] .cameraButton,
   position: relative;
   overflow: hidden;
 }
-form[action*="single-file-uploader"] .cameraButton,
-#mfcf7_zl_multifilecontainer .img-wrapper { /* debug styles for empty images  */
-  min-width: 80px;
-  min-height: 80px;
-  border: 1px solid #999;
-}
 form[action*="single-file-uploader"] .cameraButton input {
   display: none;
 }
@@ -33,6 +28,7 @@ form[action*="single-file-uploader"] .cameraButton input {
   left: 0;
 }
 
+/* Style upload button area */
 .wpcf7-form-control-wrap .form-control,
 .pix-contact7-form input {
   border: 1px solid #aaa !important;
@@ -50,31 +46,53 @@ form[action*="single-file-uploader"] .cameraButton input {
 .pix-contact7-form label:not(.cameraButton) {
   color: black;
 }
-
 form[action*="single-file-uploader"] .cameraButton,
 .pix-contact7-form input[type="submit"],
-.button,
-.img-wrapper {
+.pix-contact7-form .button {
   background-color: #666;
   color: white;
   border-radius: 0.5em
 }
-
-.wpcf7-response-output {
+.pix-contact7-form .button {
+  padding: 0.5em 1.5em !important;
+  margin-bottom: 20px;
+  margin-right: 10px;
+}
+.img-wrapper {
   border-radius: 0.5em
-  
 }
 
-#mfcf7_zl_multifilecontainer .button[type="submit"] {
-    margin-bottom: 40px;
-}
+/* Adjust spacing around images and button */
 #mfcf7_zl_multifilecontainer .img-wrapper {
-    display: inline-block;
+  display: inline-block;
 }
 #mfcf7_zl_multifilecontainer .mfcf7-zl-multifile-name {
-    display: none !important;
+  display: none !important;
+}
+div#mfcf7_zl_multifilecontainer p {
+  margin: 0 !important;
+  display: block;
+}
+#mfcf7_zl_multifilecontainer {
+  margin-bottom: 10px;
+}
+.img-wrapper {
+  margin-bottom: 10px;
+}
+#mfcf7_zl_add_file + span {
+  display: none;
+}
+.pix-contact7-form .form-group ~ p:last-child {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.pix-contact7-form input[type="submit"] {
+  margin: 10px 0;
+  padding: 0.5em 1.5em !important;
 }
 
+/* Style delete file button inside image wrapper */
 .img-wrapper .mfcf7_zl_delete_file {
   position: absolute;
   top: 10px;
@@ -84,21 +102,7 @@ form[action*="single-file-uploader"] .cameraButton,
   border-radius: 5px;
 }
 
-.pix-contact7-form p:last-child {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-.pix-contact7-form .button {
-  padding: 0.5em 1.5em !important;
-  margin-bottom: 20px;
-  margin-right: 10px;
-}
-.pix-contact7-form input[type="submit"] {
-  margin: 10px 0 20px;
-  padding: 0.5em 1.5em !important;
-}
-
+/* Style error responses */
 .wpcf7 form .wpcf7-response-output {
   border: 0 none !important;
   padding: 0.5em 1em;
@@ -106,6 +110,7 @@ form[action*="single-file-uploader"] .cameraButton,
   display: inline-block;
   background: #999;
   color: white;
+  border-radius: 0.5em
 }
 .wpcf7 form.invalid .wpcf7-response-output, .wpcf7 form.unaccepted .wpcf7-response-output, .wpcf7 form.payment-required .wpcf7-response-output {
   background: #dc3232;

@@ -24,7 +24,7 @@ $(document).ready(function(){
     // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
     function readURL(input) {
         const selectedFile = input.files[0];
-        console.log('rendering ' + selectedFile.name);
+        // console.log('Rendering ' + selectedFile.name);
         let preview;
         if ($("#mfcf7_zl_multifilecontainer")) {
             $(input).after('<div class="img-wrapper"><img class="loaded-img"></div>');
@@ -42,7 +42,6 @@ $(document).ready(function(){
                     preview.src = reader.result;
                     
                     preview.onload = function() {
-                        console.log('image loaded');
                         $(preview).parent().css({
                             'width': this.width,
                             'height': this.height,
@@ -74,27 +73,24 @@ $(document).ready(function(){
         if ($button) {
             if (numPhotos > 0) {
                 $button[0].value = buttonTextOrig.replace('Start', 'Keep');
+                $button.next('span').show();
             }
             else {
                 $button[0].value = buttonTextOrig;
+                $button.next('span').hide();
             }
         }
     }
 
-    function updateImgs(length) {
+    function updateImgs() {
         if ($("#mfcf7_zl_multifilecontainer")) {
             $('input#img-frame').change(function() {
-                console.log('[Change detected] Images currently uploaded: ' + length);
                 const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
                 const $inputLast = $inputWrappers.find('input#img-frame').last();
-                const $imgWrapperLast = $inputWrappers.find('.img-wrapper').last();
                 const $file = $inputWrappers.find('.mfcf7-zl-multifile-name');
                 if ($file[0]) {
-                    // console.log($file[0].name);
+                    // console.log('Filename: ' + $file[0].name);
                     readURL($inputLast[0]);
-                    const filename = $file[0].innerText.trim();
-                    console.log('Filename: ' + filename);
-
                     moveDeleteButton();
                 }
                 else {
@@ -109,25 +105,18 @@ $(document).ready(function(){
         }
     }
 
-    /* TODO: Change button text back to default if no photos on page */
+    /* Change button text back to default if no photos on page */
     // https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
     const observer = new MutationObserver(function() {
         const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
         const $imgWrappers = $inputWrappers.find('.img-wrapper');
-        // updateImgs($imgWrappers.length);
-        console.log('[Mutation observed] Updating button based on ' + $imgWrappers.length + ' images');
+        // console.log('[Mutation observed] Updating button based on ' + $imgWrappers.length + ' images');
         updateButton($imgWrappers.length);
     })
-    observer.observe($("#mfcf7_zl_multifilecontainer")[0], { childList: true });
+    observer.observe($('#mfcf7_zl_multifilecontainer')[0], { childList: true, subtree: true });
 
     /* Proxy event listener */
-    $('#mfcf7_zl_add_file').on('click tap', function() {
-        console.log('Clicked add photo');
-        console.log($("#mfcf7_zl_multifilecontainer")[0]);
-        const $inputWrappers = $("#mfcf7_zl_multifilecontainer").children('.multilinefile-img');
-        const $imgWrappers = $inputWrappers.find('.img-wrapper').last();
-        updateImgs(1);
-    });
+    $('#mfcf7_zl_add_file').on('click tap', updateImgs);
 
 /* ---------------------------- *
  * Third-party code starts here *
